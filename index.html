@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 短剧编剧工业化 SOP — 个人作品集</title>
+<meta name="description" content="一套从项目输入到终稿交付的 AI 短剧编剧可执行标准流程：10 步操作、5 套提示词、60 集节奏钩子表、20 项译制检查、100 分审核与 3 道质量闸门。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#282c20; --bg2:#111112; --bg3:#1a1d15;
+  --ink:#f4f4ed; --sage:#b4b8a5; --dim:#7d8271;
+  --lime:#d2ff00; --lime2:#b2c73a; --line:rgba(244,244,237,.14);
+  --red:#ff5d47;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans SC',sans-serif;overflow-x:hidden;line-height:1.65}
+::selection{background:var(--lime);color:#111}
+.mono{font-family:'IBM Plex Mono',monospace}
+.display{font-family:'Archivo Black','Noto Sans SC',sans-serif}
+.wrap{max-width:1360px;margin:0 auto;padding:0 48px}
+@media(max-width:760px){.wrap{padding:0 20px}}
+
+/* progress + nav */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:99}
+nav{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 32px;background:rgba(17,17,18,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .logo{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--lime)}
+nav .links{display:flex;gap:22px}
+nav .links a{color:var(--sage);text-decoration:none;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;transition:color .2s}
+nav .links a:hover{color:var(--lime)}
+@media(max-width:900px){nav .links{display:none}}
+
+/* hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;
+  background:radial-gradient(1200px 600px at 78% 18%,rgba(210,255,0,.07),transparent 60%),
+             radial-gradient(900px 500px at 10% 85%,rgba(178,199,58,.06),transparent 60%),var(--bg2);
+  border-bottom:1px solid var(--line);overflow:hidden}
+.hero .kicker{font-family:'IBM Plex Mono',monospace;color:var(--lime);font-size:13px;letter-spacing:.32em;margin-bottom:26px}
+.hero h1{font-family:'Archivo Black','Noto Sans SC',sans-serif;font-size:clamp(44px,7.2vw,108px);line-height:1.02;letter-spacing:.01em}
+.hero h1 .lime{color:var(--lime)}
+.hero .sub{margin-top:28px;max-width:760px;color:var(--sage);font-size:17px}
+.hero .sub b{color:var(--ink)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:38px}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;border:1px solid var(--line);
+  padding:8px 14px;color:var(--sage);background:rgba(244,244,237,.03)}
+.chip b{color:var(--lime);font-weight:600}
+.hero-cta{display:flex;gap:16px;margin-top:46px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:'IBM Plex Mono',monospace;
+  font-size:13px;letter-spacing:.08em;padding:14px 26px;transition:transform .2s,box-shadow .2s}
+.btn-solid{background:var(--lime);color:#111;font-weight:700}
+.btn-solid:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(210,255,0,.25)}
+.btn-ghost{border:1px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--lime);color:var(--lime)}
+.hero-grid-deco{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:560px;height:560px;
+  border:1px solid rgba(210,255,0,.12);border-radius:50%;pointer-events:none}
+.hero-grid-deco::before{content:'';position:absolute;inset:70px;border:1px dashed rgba(210,255,0,.14);border-radius:50%}
+.hero-grid-deco::after{content:'';position:absolute;inset:150px;border:1px solid rgba(210,255,0,.1);border-radius:50%}
+@media(max-width:900px){.hero-grid-deco{display:none}}
+
+/* marquee */
+.marquee{background:var(--lime);color:#111;overflow:hidden;position:relative;contain:paint;padding:13px 0;border-block:1px solid #111}
+.marquee-track{display:flex;gap:44px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-weight:700;
+  font-size:13px;letter-spacing:.12em;animation:marquee 26s linear infinite;width:max-content}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* sections */
+section{padding:110px 0;border-bottom:1px solid var(--line);position:relative}
+.sec-head{margin-bottom:56px}
+.sec-num{font-family:'IBM Plex Mono',monospace;color:var(--lime);font-size:13px;letter-spacing:.3em;margin-bottom:14px}
+.sec-title{font-family:'Archivo Black','Noto Sans SC',sans-serif;font-size:clamp(30px,4.4vw,58px);line-height:1.08}
+.sec-sub{margin-top:16px;color:var(--sage);max-width:720px;font-size:15.5px}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* principles */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.pcell{background:var(--bg3);padding:34px 30px;position:relative;transition:background .25s}
+.pcell:hover{background:#20241a}
+.pcell .pn{font-family:'IBM Plex Mono',monospace;color:var(--lime);font-size:12px;letter-spacing:.2em;margin-bottom:14px}
+.pcell h3{font-size:19px;margin-bottom:10px}
+.pcell p{color:var(--sage);font-size:14px}
+.pcell::after{content:'';position:absolute;left:0;top:0;width:100%;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.pcell:hover::after{transform:scaleX(1)}
+@media(max-width:960px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.pgrid{grid-template-columns:1fr}}
+
+/* SOP steps */
+.sop-layout{display:grid;grid-template-columns:400px 1fr;gap:56px;align-items:start}
+.sop-sticky{position:sticky;top:96px}
+.sop-svg{width:100%;background:var(--bg3);border:1px solid var(--line)}
+.sop-svg text{font-family:'IBM Plex Mono',monospace}
+.flow-dot{position:absolute;width:14px;height:14px;background:var(--lime);border-radius:50%;
+  box-shadow:0 0 18px rgba(210,255,0,.8);transform:translate(-50%,-50%);transition:left .1s linear,top .1s linear}
+.sop-map{position:relative}
+.sop-legend{display:flex;gap:18px;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);flex-wrap:wrap}
+.sop-legend span i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.step{border:1px solid var(--line);background:var(--bg3);margin-bottom:22px;transition:border-color .3s,transform .3s;position:relative}
+.step.active{border-color:var(--lime);transform:translateX(6px)}
+.step-head{display:flex;align-items:baseline;gap:18px;padding:24px 28px 18px;border-bottom:1px dashed var(--line)}
+.step-head .sn{font-family:'Archivo Black',sans-serif;font-size:34px;color:var(--lime);line-height:1}
+.step-head h3{font-size:21px}
+.step-head .tbl{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.06em;white-space:nowrap}
+.step-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.sb{padding:18px 28px;border-bottom:1px solid rgba(244,244,237,.06)}
+.sb.full{grid-column:1/-1}
+.sb .lb{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:var(--lime2);margin-bottom:8px}
+.sb p{font-size:14.5px;color:var(--ink)}
+.sb.stop .lb{color:var(--red)}
+.sb.stop p{color:#ffb3a8}
+@media(max-width:1080px){.sop-layout{grid-template-columns:1fr}.sop-sticky{position:relative;top:0}}
+@media(max-width:640px){.step-body{grid-template-columns:1fr}.step-head .tbl{display:none}}
+
+/* tables */
+.tbl-scroll{overflow-x:auto;border:1px solid var(--line)}
+table.spec{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+table.spec th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--lime);
+  text-align:left;padding:14px 18px;background:var(--bg2);border-bottom:1px solid var(--line);white-space:nowrap}
+table.spec td{padding:13px 18px;border-bottom:1px solid rgba(244,244,237,.07);vertical-align:top;color:var(--sage)}
+table.spec td.k{color:var(--ink);white-space:nowrap}
+table.spec td.v{color:var(--ink)}
+table.spec tr:hover td{background:rgba(210,255,0,.04)}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:2px 8px;border:1px solid var(--line);color:var(--sage);margin-right:4px}
+.bad{color:#ff9b8a}
+.good{color:var(--lime)}
+.arrow{color:var(--lime);font-family:'IBM Plex Mono',monospace;padding:0 6px}
+
+/* prompt blocks */
+.prompt{border:1px solid var(--line);background:var(--bg2);margin-bottom:44px}
+.prompt-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:16px;padding:26px 32px;border-bottom:1px solid var(--line);background:var(--bg3)}
+.prompt-top .pid{font-family:'Archivo Black',sans-serif;color:var(--lime);font-size:26px}
+.prompt-top h3{font-size:22px}
+.prompt-top .pen{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.18em}
+.prompt-top .purpose{width:100%;color:var(--sage);font-size:14px;margin-top:6px}
+.role-line{margin:22px 32px 0;padding:14px 18px;border-left:3px solid var(--lime);background:rgba(210,255,0,.06);
+  font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:var(--ink)}
+.pblocks{padding:8px 32px 4px}
+.pblock{padding:18px 0;border-bottom:1px dashed rgba(244,244,237,.1);display:grid;grid-template-columns:230px 1fr;gap:22px}
+.pblock .bt{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--lime2);letter-spacing:.05em;padding-top:2px}
+.pblock p{font-size:14px;color:var(--ink)}
+.endline{margin:20px 32px;padding:13px 18px;background:rgba(255,93,71,.08);border-left:3px solid var(--red);
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:#ffc9bf}
+.prompt-bottom{display:grid;grid-template-columns:1.2fr 1fr;gap:0;border-top:1px solid var(--line)}
+.checklist{padding:24px 32px;border-right:1px solid var(--line)}
+.checklist h4,.passcmd h4{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--lime);margin-bottom:14px}
+.checklist ul{list-style:none;columns:1}
+.checklist li{font-size:13.5px;color:var(--sage);padding:5px 0 5px 24px;position:relative}
+.checklist li::before{content:'□';position:absolute;left:0;color:var(--lime2)}
+.passcmd{padding:24px 32px}
+.passcmd .cmd{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#111;background:var(--lime);padding:16px 18px;line-height:1.7}
+.passcmd .hint{font-size:12px;color:var(--dim);margin-top:10px;font-family:'IBM Plex Mono',monospace}
+@media(max-width:900px){.pblock{grid-template-columns:1fr;gap:8px}.prompt-bottom{grid-template-columns:1fr}.checklist{border-right:none;border-bottom:1px solid var(--line)}}
+
+/* rhythm */
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:34px}
+.act{background:var(--bg3);padding:22px 24px}
+.act .ar{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.14em;margin-bottom:6px}
+.act h4{font-size:17px;margin-bottom:4px}
+.act p{font-size:13px;color:var(--sage)}
+.heatmap{display:grid;grid-template-columns:repeat(20,1fr);gap:5px;margin:26px 0 14px}
+.cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;border:1px solid var(--line);color:var(--dim);background:var(--bg3);position:relative;cursor:default;transition:transform .15s}
+.cell:hover{transform:scale(1.35);z-index:2}
+.cell.L1{background:rgba(178,199,58,.16);color:var(--sage)}
+.cell.L2{background:rgba(210,255,0,.32);color:#111;font-weight:700;border-color:transparent}
+.cell.L3{background:var(--lime);color:#111;font-weight:700;box-shadow:0 0 14px rgba(210,255,0,.5);border-color:transparent}
+.cell.paywall{outline:2px solid var(--red);outline-offset:-2px}
+.hm-legend{display:flex;gap:20px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim)}
+.hm-legend i{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px}
+.hookrules{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:34px}
+.hookrules div{background:var(--bg3);padding:16px 22px;font-size:14px;color:var(--sage)}
+.hookrules div b{color:var(--ink)}
+@media(max-width:760px){.heatmap{grid-template-columns:repeat(10,1fr)}.acts{grid-template-columns:1fr}.hookrules{grid-template-columns:1fr}}
+
+/* gates */
+.gates{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.gate{background:var(--bg2);padding:34px 30px;position:relative}
+.gate .gn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em;color:var(--dim)}
+.gate .gs{font-family:'Archivo Black',sans-serif;font-size:56px;color:var(--lime);line-height:1;margin:12px 0 4px}
+.gate h3{font-size:19px;margin-bottom:10px}
+.gate p{font-size:14px;color:var(--sage)}
+.gate .gf{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;color:#ff9b8a;font-family:'IBM Plex Mono',monospace}
+@media(max-width:900px){.gates{grid-template-columns:1fr}}
+.veto{margin-top:44px;border:1px solid rgba(255,93,71,.4);background:rgba(255,93,71,.05);padding:30px 34px}
+.veto h4{font-family:'IBM Plex Mono',monospace;color:var(--red);letter-spacing:.18em;font-size:12px;margin-bottom:16px}
+.veto ul{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px 26px}
+.veto li{font-size:13.5px;color:#ffc9bf;padding-left:20px;position:relative}
+.veto li::before{content:'✕';position:absolute;left:0;color:var(--red);font-size:12px}
+@media(max-width:900px){.veto ul{grid-template-columns:1fr}}
+
+/* deliverables */
+.dl{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.dl div{background:var(--bg3);padding:24px 26px}
+.dl .st{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--lime);letter-spacing:.16em}
+.dl h4{font-size:16.5px;margin:8px 0 6px}
+.dl p{font-size:13.5px;color:var(--sage)}
+@media(max-width:960px){.dl{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.dl{grid-template-columns:1fr}}
+
+/* outro */
+.outro{background:var(--bg2);text-align:center;padding:130px 0}
+.outro h2{font-family:'Archivo Black','Noto Sans SC',sans-serif;font-size:clamp(30px,4.6vw,60px);line-height:1.1}
+.outro p{color:var(--sage);margin:22px auto 0;max-width:640px;font-size:15.5px}
+footer{padding:34px 0;background:var(--bg2);border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--dim);letter-spacing:.1em}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  nav,.progress,.hero-cta{display:none}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+
+<div class="progress"></div>
+<nav>
+  <span class="logo">AI·SOP / SCREENWRITING</span>
+  <div class="links">
+    <a href="#rules">铁律</a><a href="#sop">十步流程</a><a href="#input">输入卡</a>
+    <a href="#prompts">提示词库</a><a href="#rhythm">节奏钩子</a><a href="#localization">译制检查</a>
+    <a href="#score">评分表</a><a href="#gates">闸门</a><a href="#deliverables">交付物</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-grid-deco"></div>
+  <div class="wrap">
+    <div class="kicker">PORTFOLIO · AI SHORT-DRAMA SCREENWRITING SOP</div>
+    <h1>AI 短剧编剧<br><span class="lime">工业化 SOP</span></h1>
+    <p class="sub">一套<b>从项目输入到终稿交付</b>的可执行标准流程：每一步都写清楚人工做什么、用哪张表、复制哪段提示词、AI 应该交什么、以及<b>什么情况必须停下来</b>。AI 只做当前阶段，做完必须停 —— 全流程由 3 道评分闸门把守。</p>
+    <div class="hero-meta"><span class="chip"><b>10</b> 步执行</span><span class="chip"><b>06</b> 条铁律</span><span class="chip"><b>05</b> 套提示词</span><span class="chip"><b>60</b> 集节奏表</span><span class="chip"><b>20</b> 项译制检查</span><span class="chip"><b>100</b> 分审核</span><span class="chip"><b>03</b> 道闸门</span></div>
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="#sop">查看十步流程 ↓</a>
+      <a class="btn btn-ghost" href="assets/ai-serial-writing-sop.pdf" target="_blank">下载 PDF 版 ↓</a>
+    </div>
+  </div>
+</header>
+<div class="marquee"><div class="marquee-track">填写输入卡 → 立项评估 → 人设大纲 → 分集梗概 → 前10集成稿 → 节奏校准 → 译制本土化 → 分批续写 → 终稿统稿 → 审核交付 → 填写输入卡 → 立项评估 → 人设大纲 → 分集梗概 → 前10集成稿 → 节奏校准 → 译制本土化 → 分批续写 → 终稿统稿 → 审核交付 → </div></div>
+
+<section id="rules">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">00 / OPERATING PRINCIPLES</div>
+    <h2 class="sec-title">六条铁律：先定规矩，再谈创作</h2>
+    <p class="sec-sub">整套 SOP 的底层约束。任何一步违反铁律，流程直接停下返工，不进入下一阶段。</p>
+  </div>
+  <div class="pgrid"><div class="pcell reveal"><div class="pn">RULE 01</div><h3>禁止直接让 AI 写完整 60 集</h3><p>必须先通过立项、人设大纲和分集梗概，再进入成稿。</p></div><div class="pcell reveal"><div class="pn">RULE 02</div><h3>大纲确定后锁死设定</h3><p>AI 不得擅自改变核心身份、人物动机、关系和最终真相。</p></div><div class="pcell reveal"><div class="pn">RULE 03</div><h3>前 10 集单独校准</h3><p>低于 80 分先修改，不继续写后续。</p></div><div class="pcell reveal"><div class="pn">RULE 04</div><h3>每集必须有推进</h3><p>每集必须有剧情推进、情绪变化或爽点，并以新钩子结束。</p></div><div class="pcell reveal"><div class="pn">RULE 05</div><h3>一切必须可拍摄</h3><p>所有动作、冲突和结果都要能被真人拍摄或 AI 画面直接呈现。</p></div><div class="pcell reveal"><div class="pn">RULE 06</div><h3>付费点必须兑现</h3><p>付费墙前拉满情绪，付费后立即释放部分爽点，不能只吊胃口不兑现。</p></div></div>
+ </div>
+</section>
+
+<section id="sop">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">01 / STANDARD OPERATING PROCEDURE</div>
+    <h2 class="sec-title">十步执行总览</h2>
+    <p class="sec-sub">按顺序操作，每张卡片的右下角是红线 —— 命中“不能继续”的条件就停，修完再走。流程不允许跳步：不立项不开大纲，大纲不过不拆集，前 10 集不过 80 分不续写。</p>
+  </div>
+  <div class="sop-layout">
+    <div class="sop-sticky reveal">
+      <div class="sop-map"><svg class="sop-svg" viewBox="0 0 400 1220" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 60 60 C 60 119.0, 340 119.0, 340 178 C 340 237.0, 60 237.0, 60 296 C 60 355.0, 340 355.0, 340 414 C 340 473.0, 60 473.0, 60 532 C 60 591.0, 340 591.0, 340 650 C 340 709.0, 60 709.0, 60 768 C 60 827.0, 340 827.0, 340 886 C 340 945.0, 60 945.0, 60 1004 C 60 1063.0, 340 1063.0, 340 1122 " fill="none" stroke="rgba(244,244,237,.14)" stroke-width="2"/>
+      <path id="flowPath" d="M 60 60 C 60 119.0, 340 119.0, 340 178 C 340 237.0, 60 237.0, 60 296 C 60 355.0, 340 355.0, 340 414 C 340 473.0, 60 473.0, 60 532 C 60 591.0, 340 591.0, 340 650 C 340 709.0, 60 709.0, 60 768 C 60 827.0, 340 827.0, 340 886 C 340 945.0, 60 945.0, 60 1004 C 60 1063.0, 340 1063.0, 340 1122 " fill="none" stroke="#d2ff00" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="60" cy="60" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="60" y="63.5" fill="#d2ff00" font-size="8" text-anchor="middle">1</text><circle cx="340" cy="178" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="340" y="181.5" fill="#d2ff00" font-size="8" text-anchor="middle">2</text><circle cx="60" cy="296" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="60" y="299.5" fill="#d2ff00" font-size="8" text-anchor="middle">3</text><circle cx="340" cy="414" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="340" y="417.5" fill="#d2ff00" font-size="8" text-anchor="middle">4</text><circle cx="60" cy="532" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="60" y="535.5" fill="#d2ff00" font-size="8" text-anchor="middle">5</text><circle cx="340" cy="650" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="340" y="653.5" fill="#d2ff00" font-size="8" text-anchor="middle">6</text><circle cx="60" cy="768" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="60" y="771.5" fill="#d2ff00" font-size="8" text-anchor="middle">7</text><circle cx="340" cy="886" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="340" y="889.5" fill="#d2ff00" font-size="8" text-anchor="middle">8</text><circle cx="60" cy="1004" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="60" y="1007.5" fill="#d2ff00" font-size="8" text-anchor="middle">9</text><circle cx="340" cy="1122" r="7" fill="#282c20" stroke="#d2ff00" stroke-width="2"/><text x="340" y="1125.5" fill="#d2ff00" font-size="8" text-anchor="middle">10</text></svg><div class="flow-dot"></div></div>
+      <div class="sop-legend"><span><i style="background:#d2ff00"></i>当前阶段</span><span><i style="background:rgba(244,244,237,.2)"></i>待执行</span><span>滚动页面推进流程 ↓</span></div>
+    </div>
+    <div>
+    <div class="step reveal" id="step01">
+      <div class="step-head"><span class="sn">01</span><h3>填写项目基础信息</h3><span class="tbl">使用表 → 02_项目输入卡</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>把市场、受众、题材、集数、时长、付费墙、成本、禁区逐项填入输入卡</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>把黄色单元格中的项目参数整理后发给 AI</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>明确目标市场、题材、集数、时长、成本和禁区</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>项目参数明显缺失时，不进入立项</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step02">
+      <div class="step-head"><span class="sn">02</span><h3>判断这个题能不能做</h3><span class="tbl">使用表 → 03_立项评估提示词</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>把项目参数和原始创意交给 AI，只做立项判断</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>复制整段立项提示词</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>100 分评分、一页纸立项方案、主要风险</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>评分低于 60 分或出现一票否决项</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step03">
+      <div class="step-head"><span class="sn">03</span><h3>把人物和全剧骨架定死</h3><span class="tbl">使用表 → 04_人设大纲提示词</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>确认立项方案后，让 AI 只做人设和大纲</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>复制整段人设大纲提示词</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>人物卡、主线模型、三幕七节点、全剧钩子图</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>人物动机不闭环、大纲逻辑不通</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step04">
+      <div class="step-head"><span class="sn">04</span><h3>拆成每一集要发生什么</h3><span class="tbl">使用表 → 05_分集梗概提示词</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>确认大纲后，让 AI 拆逐集梗概，不写台词</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>复制整段分集提示词</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>全剧分集梗概、爽点/反转/伏笔分布</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>存在水集、重复集、连续受虐不反击</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step05">
+      <div class="step-head"><span class="sn">05</span><h3>只写前 10 集做校准</h3><span class="tbl">使用表 → 06_前10集成稿提示词</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>只允许写第 1—10 集成稿，用于校准风格和节奏</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>复制整段前 10 集提示词</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>可拍摄的前 10 集完整剧本＋制作备注</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>前 10 集自检低于 80 分</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step06">
+      <div class="step-head"><span class="sn">06</span><h3>检查节奏、钩子和付费点</h3><span class="tbl">使用表 → 08_节奏钩子规划</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>把 AI 结果填入规划表逐集核对</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>将 AI 结果填入规划表</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>看是否每集有钩子、关键集有大钩子</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>付费墙前没有情绪峰值</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step07">
+      <div class="step-head"><span class="sn">07</span><h3>检查译制和本土化</h3><span class="tbl">使用表 → 09_译制本土化规则</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>按 20 项规则逐条检查台词与文化适配</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>让 AI 按规则重写不合格台词</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>短句、通用词、可直译、无强文化梗</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>大量长句、方言、双关、复杂亲属关系</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step08">
+      <div class="step-head"><span class="sn">08</span><h3>前 10 集通过后分批续写</h3><span class="tbl">使用表 → 07_续写统稿提示词</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>每批只放 10 集，批与批之间做一致性检查</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>每次只让 AI 续写 10 集</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>第 11—20 集、第 21—30 集……</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>AI 擅自改设定或忘记已埋伏笔</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step09">
+      <div class="step-head"><span class="sn">09</span><h3>全剧完成后统一修订</h3><span class="tbl">使用表 → 07_续写统稿提示词</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>全剧完成后跑一遍统稿提示词</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>复制最终统稿提示词</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>统一风格、修复逻辑、制作备注、终稿</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>仍有人设矛盾、时间线错误、伏笔未回收</p></div>
+      </div>
+    </div>
+    <div class="step reveal" id="step10">
+      <div class="step-head"><span class="sn">10</span><h3>最终打分并决定交付</h3><span class="tbl">使用表 → 10_审核评分表</span></div>
+      <div class="step-body">
+        <div class="sb"><div class="lb">你要做什么</div><p>按剧本实际表现逐项打分并写修改清单</p></div>
+        <div class="sb"><div class="lb">复制给 AI 什么</div><p>按剧本实际表现打分</p></div>
+        <div class="sb"><div class="lb">AI 应该交付什么</div><p>总分、主要问题、修改清单</p></div>
+        <div class="sb stop"><div class="lb">✕ 什么时候不能继续</div><p>总分低于 80 分不建议交付</p></div>
+      </div>
+    </div></div>
+  </div>
+ </div>
+</section>
+
+<section id="input">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">02 / STEP 1 ARTIFACT</div>
+    <h2 class="sec-title">项目输入卡：16 项参数，填完才准开工</h2>
+    <p class="sec-sub">必填项缺失就不进入立项。下面是一个海外女频悬疑爱情项目的填写示例（示例项目：40 集 × 2 分钟，付费墙在第 9 集结尾）。</p>
+  </div>
+  <div class="tbl-scroll reveal"><table class="spec">
+    <thead><tr><th>类别</th><th>字段</th><th>填写说明</th><th>填写示例</th></tr></thead>
+    <tbody><tr><td class="k"><span class="tag">市场</span></td><td class="k">目标市场</td><td>明确首发核心区域，不要只写“海外”</td><td class="v">北美</td></tr><tr><td class="k"><span class="tag">市场</span></td><td class="k">目标受众</td><td>年龄、性别、核心兴趣</td><td class="v">25—45 岁女性，偏好豪门情感、悬疑反转、危险关系、强情绪剧情</td></tr><tr><td class="k"><span class="tag">产品</span></td><td class="k">内容模式</td><td>付费精品 / 广告流量 / 混合</td><td class="v">付费精品</td></tr><tr><td class="k"><span class="tag">题材</span></td><td class="k">剧集类型</td><td>女频或男频</td><td class="v">女频</td></tr><tr><td class="k"><span class="tag">题材</span></td><td class="k">核心题材</td><td>只填 1 个主类型</td><td class="v">悬疑爱情</td></tr><tr><td class="k"><span class="tag">题材</span></td><td class="k">叠加元素</td><td>建议 1—2 个，避免元素过多</td><td class="v">失忆悬疑 ＋ 危险恋人</td></tr><tr><td class="k"><span class="tag">体量</span></td><td class="k">总集数</td><td>按项目实际填写</td><td class="v">40 集</td></tr><tr><td class="k"><span class="tag">体量</span></td><td class="k">单集时长</td><td>写清分钟或秒</td><td class="v">2 分钟</td></tr><tr><td class="k"><span class="tag">商业</span></td><td class="k">付费墙位置</td><td>通常设在第 8—12 集</td><td class="v">第 9 集结尾</td></tr><tr><td class="k"><span class="tag">制作</span></td><td class="k">制作方式</td><td>真人实拍 / AI 真人 / 译制</td><td class="v">AI 真人短剧</td></tr><tr><td class="k"><span class="tag">制作</span></td><td class="k">成本等级</td><td>低、中、高</td><td class="v">高</td></tr><tr><td class="k"><span class="tag">制作</span></td><td class="k">主要场景上限</td><td>限制主要场景数量</td><td class="v">不超过 8 个</td></tr><tr><td class="k"><span class="tag">内容</span></td><td class="k">一句话原始创意</td><td>人物 ＋ 冲突 ＋ 核心爽点</td><td class="v">豪门继承人失去一年记忆后，发现深爱的恋人竟是杀人嫌疑人，而追查真相的刑警揭开了她失忆前亲手隐藏的罪证</td></tr><tr><td class="k"><span class="tag">内容</span></td><td class="k">禁止出现内容</td><td>项目方不接受的元素</td><td class="v">未成年人性暗示、宗教冒犯、现实政治</td></tr><tr><td class="k"><span class="tag">参考</span></td><td class="k">参考方向</td><td>只参考结构和卖点</td><td class="v">海外豪门复仇短剧的身份反转节奏 ＋ 悬疑爱情剧的多重真相结构</td></tr><tr><td class="k"><span class="tag">交付</span></td><td class="k">剧本语言</td><td>中文底稿 / 英文底稿 / 双语</td><td class="v">中英双语底稿</td></tr></tbody></table></div>
+  <div class="role-line reveal" style="margin:26px 0 0">发给 AI 的开场说明 —— “请根据我填写的项目参数进行创作。缺失的非关键参数可以做合理假设，但必须先列出假设。不要直接写全集，必须先进行立项评估，等我确认后再进入人物与大纲阶段。”</div>
+ </div>
+</section>
+
+<section id="prompts">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">03 / PROMPT MODULES</div>
+    <h2 class="sec-title">五套提示词：每套都有角色、结构、收尾和放行口令</h2>
+    <p class="sec-sub">提示词不是灵感，是模具。每套提示词都包含四个硬部件：角色设定 → 结构化任务块 → 强制收尾（“完成后必须停止”）→ 人工放行口令。AI 只有听到口令才能进入下一阶段。</p>
+  </div>
+  
+  <div class="prompt reveal">
+    <div class="prompt-top"><span class="pid">P-01</span><h3>立项评估</h3><span class="pen">GREENLIGHT</span>
+      <span class="purpose">目的：先判断项目是否值得做，避免 AI 直接写出一部长篇废稿。</span></div>
+    <div class="role-line">角色设定 —— “你现在是一名海外短剧内容策划和立项评估负责人。”</div>
+    <div class="pblocks"><div class="pblock"><div class="bt">任务</div><p>只完成“立项评估”，暂时不要写人物小传、分集梗概和完整剧本。</p></div><div class="pblock"><div class="bt">第一步：检查项目参数</div><p>用表格列出：① 已明确的信息；② 采用的合理假设；③ 仍会影响立项判断的风险点。</p></div><div class="pblock"><div class="bt">第二步：四维评分</div><p>题材普适性 / 人设辨识度 / 爽点可视化与可译性 / 合规安全性，每项 25 分，总分 100。每项必须输出得分、理由、高风险点和可直接执行的修改建议。</p></div><div class="pblock"><div class="bt">一票否决项</div><p>依赖强本土文化背景；谐音梗、成语、宗族关系；现实政治；丑化宗教；美化违法犯罪；未成年人性暗示；种族性别残障歧视；与已有作品高度雷同；成本明显超标 —— 命中任一，必须写“暂不建议立项”。</p></div><div class="pblock"><div class="bt">第三步：一页纸立项方案</div><p>中英文名、市场受众、题材、30 字一句话故事、身份反差、核心冲突、核心情绪、核心爽点、付费驱动力、3 个可剪辑视觉爆点、2 个差异化亮点、制作风险、最终建议（优先立项 / 修改后立项 / 暂不立项）。</p></div></div>
+    <div class="endline">硬性收尾 —— 完成后必须停止，不得继续写人物、大纲或剧本。</div>
+    <div class="prompt-bottom">
+      <div class="checklist"><h4>人工检查清单（逐项打勾）</h4><ul><li>总分是否达到 60 分</li><li>是否出现一票否决项</li><li>一句话故事能否讲清“谁、遭遇什么、要做什么”</li><li>主角是否有身份反差和明确目标</li><li>爽点是否能被画面直接呈现</li><li>是否过度依赖中国文化背景</li><li>差异化是否只是换名字</li><li>成本是否符合项目等级</li><li>是否明确给出立项结论</li></ul></div>
+      <div class="passcmd"><h4>确认通过后，你对 AI 说：</h4><div class="cmd">立项方案通过。请进入人物设定与全剧大纲阶段，禁止直接写分集。</div>
+      <div class="hint">↑ 不说这句话，AI 不得进入下一阶段</div></div>
+    </div>
+  </div>
+  <div class="prompt reveal">
+    <div class="prompt-top"><span class="pid">P-02</span><h3>人物与全剧大纲</h3><span class="pen">STORY BIBLE</span>
+      <span class="purpose">目的：把人物、真相和关键节点先定死，减少后期反复推翻。</span></div>
+    <div class="role-line">角色设定 —— “你现在是一名海外短剧主笔和剧本统筹负责人。”</div>
+    <div class="pblocks"><div class="pblock"><div class="bt">前提</div><p>立项方案已确认。必须以确认内容为唯一创作依据，不得擅自改变题材、目标市场、核心身份、核心冲突和最终卖点。</p></div><div class="pblock"><div class="bt">一、核心人物卡</div><p>每个主要人物 17 项：中英文名、年龄、身份职业、可识别特征、三个性格关键词、表面目标、深层欲望、最大恐惧、性格缺陷、隐藏秘密、行为逻辑、人物关系、说话方式、代表动作、前中后期状态、人物弧光、“绝对不会做的事”。</p></div><div class="pblock"><div class="bt">二、故事核心模型</div><p>主线目标 / 阻力 / 反派 / 失败代价 / 情感主线 / 成长副线 / 核心秘密 / 最终真相 / 主角最终的关键选择 / 给观众的最终情绪满足。</p></div><div class="pblock"><div class="bt">三、三幕七节点</div><p>第 1—2 集建置 → 第 3—4 集不可逆打击 → 第 10—12 集觉醒反击（第一付费墙）→ 第 20—22 集阶段胜利＋新危机 → 第 28—30 集中点反转 → 第 38—42 集至暗时刻 → 第 48—50 集终极反击 → 第 55—58 集最终对决 → 第 59—60 集闭环＋续作悬念。每个节点必须写成“人物＋具体动作＋直接结果”，禁止只写抽象心理变化。</p></div><div class="pblock"><div class="bt">四、全剧钩子规划</div><p>每集结尾一个小钩子；每 3 集一个中型钩子；每 10 集一个大型钩子；第 8—12 集付费墙必须为大型钩子；第 20、30、40 集设大型留存钩子；相邻两集不得连用相同钩子类型。</p></div><div class="pblock"><div class="bt">五、制作可行性</div><p>输出主要人物数量、场景清单、高成本场面、AI 画面难点，以及每个高成本场面的低成本替代方案。</p></div></div>
+    <div class="endline">硬性收尾 —— 完成后停止，等待我确认大纲。</div>
+    <div class="prompt-bottom">
+      <div class="checklist"><h4>人工检查清单（逐项打勾）</h4><ul><li>每个主要人物是否有明确目标和行动逻辑</li><li>主角是否主动推动剧情</li><li>反派是否有利益，而非纯工具人</li><li>人物是否有“绝对不会做的事”</li><li>七个节点是否全部为可拍摄事件</li><li>第 10—12 集是否对应第一次重大转折</li><li>中点反转和至暗时刻是否真正改变局势</li><li>场景和人物数量是否可控</li></ul></div>
+      <div class="passcmd"><h4>确认通过后，你对 AI 说：</h4><div class="cmd">人物和大纲通过。请按已确认设定拆解全剧分集梗概，每集控制在 100 字左右。</div>
+      <div class="hint">↑ 不说这句话，AI 不得进入下一阶段</div></div>
+    </div>
+  </div>
+  <div class="prompt reveal">
+    <div class="prompt-top"><span class="pid">P-03</span><h3>全剧分集梗概</h3><span class="pen">EPISODE MAP</span>
+      <span class="purpose">目的：先把每集的任务拆清楚，避免 AI 写成流水账或中途改故事。</span></div>
+    <div class="role-line">角色设定 —— “你现在是一名海外短剧执行编剧和分集策划。”</div>
+    <div class="pblocks"><div class="pblock"><div class="bt">每集固定格式</div><p>EP.01：本集目标 / 承接上集 / 核心冲突 / 主角主动行动 / 新增信息 / 人物关系变化 / 爽点或刺激点 / 本集结果 / 结尾钩子 / 钩子等级（小中大）/ 下一集必须兑现的内容。每集约 100 字，不写完整台词。</p></div><div class="pblock"><div class="bt">每集硬性标准 ×10</div><p>必须承接上集钩子；至少一次实质变化；结尾必须产生新问题；普通悬念三集内兑现；不得连续多集只让主角受虐；同一冲突不能只换场景重复演；不得出现无推进、无爽点、无钩子的水集；所有事件必须符合人物卡和时间线……</p></div><div class="pblock"><div class="bt">付费墙设计</div><p>付费前 1—2 集把冲突、焦虑和好奇推至峰值；断点优先卡在身份即将曝光、主角即将反杀、生死危机或秘密揭晓；付费后第一集必须立刻释放部分爽点；禁止连续吊胃口不兑现。</p></div><div class="pblock"><div class="bt">追加六张分布表</div><p>爽点分布 / 反转分布 / 钩子等级分布 / 付费点情绪积累与释放 / 伏笔埋设与回收集数 / 场景和人物使用频率。</p></div><div class="pblock"><div class="bt">自检</div><p>列出可能的水集、重复冲突、人设风险、时间线风险、伏笔未回收风险、制作成本过高的集数。</p></div></div>
+    <div class="endline">硬性收尾 —— 完成后停止，不得开始写完整剧本。</div>
+    <div class="prompt-bottom">
+      <div class="checklist"><h4>人工检查清单（逐项打勾）</h4><ul><li>每一集是否都发生了变化</li><li>是否有只重复争吵、羞辱或误会的集数</li><li>主角是否长期被动</li><li>普通悬念是否超过 3 集不兑现</li><li>第 1、3、10、20、30、40 集钩子是否足够强</li><li>付费墙前是否达到情绪峰值</li><li>付费后是否立刻释放爽点</li><li>伏笔是否标明埋设和回收集数</li></ul></div>
+      <div class="passcmd"><h4>确认通过后，你对 AI 说：</h4><div class="cmd">全剧分集梗概通过。请只写第 1—10 集完整成稿，不得续写第 11 集以后。</div>
+      <div class="hint">↑ 不说这句话，AI 不得进入下一阶段</div></div>
+    </div>
+  </div>
+  <div class="prompt reveal">
+    <div class="prompt-top"><span class="pid">P-04</span><h3>前 10 集完整成稿</h3><span class="pen">PILOT BATCH</span>
+      <span class="purpose">目的：用前 10 集校准风格、节奏、译制和制作难度，再决定是否继续。</span></div>
+    <div class="role-line">角色设定 —— “你现在是一名海外 AI 真人短剧主笔和可执行剧本编剧。”</div>
+    <div class="pblocks"><div class="pblock"><div class="bt">开篇硬性要求</div><p>第 1 集前 3 秒直接进入人物、动作或冲突；不写风景空镜、起床洗漱、长篇回忆；前 30 秒必须出现强视觉冲突、身份震惊、危险事件或关系反转；第 1 集结尾中型钩子、第 3 集大型钩子、第 10 集强付费断点。</p></div><div class="pblock"><div class="bt">单集三段式</div><p>前 10% 快速承接上集钩子，不重复大段剧情；中间 70% 完成冲突升级、信息推进、关系变化、主角行动或小爽点；最后 20% 在真相即将揭晓、身份即将曝光、主角即将反杀时切断。</p></div><div class="pblock"><div class="bt">剧本格式</div><p>场次（地点·内/外·时间）→ 出场人物 → 动作描述 → 人物（动作或情绪）：台词 → 本场信息推进 → 本集结尾钩子（内容/类型/等级/下集兑现方式）→ AI 制作备注（人物/场景/道具/画面难点/建议镜头/特效/低成本替代）。</p></div><div class="pblock"><div class="bt">台词规则</div><p>优先短句；一句话只说一件事；翻译成英文后尽量不超过 15 个单词；同一概念全剧同一称呼；不用方言、谐音梗、成语、网络热词；情绪优先用动作、停顿、表情表现；每句台词必须推进剧情、传递信息、制造冲突或体现人物。</p></div><div class="pblock"><div class="bt">100 分自检</div><p>开篇 15 / 冲突 10 / 人设 10 / 主动性 10 / 推进效率 10 / 爽点 10 / 钩子 10 / 付费点 10 / 译制 5 / 制作 5 / 文化合规 5。</p></div></div>
+    <div class="endline">硬性收尾 —— 如低于 80 分，先给出问题并自动修改，不得继续写第 11 集。</div>
+    <div class="prompt-bottom">
+      <div class="checklist"><h4>人工检查清单（逐项打勾）</h4><ul><li>前 3 秒是否直接进入冲突</li><li>是否删除空镜和背景介绍</li><li>受辱后是否迅速接反击或悬念</li><li>每集结尾是否切断在峰值点</li><li>台词是否短句、可直译</li><li>制作备注是否齐全</li><li>自检分数是否 ≥80</li></ul></div>
+      <div class="passcmd"><h4>确认通过后，你对 AI 说：</h4><div class="cmd">前 10 集通过。请严格读取已确认设定和前文，只续写第 11—20 集，并在结尾进行一致性检查。</div>
+      <div class="hint">↑ 不说这句话，AI 不得进入下一阶段</div></div>
+    </div>
+  </div>
+  <div class="prompt reveal">
+    <div class="prompt-top"><span class="pid">P-05</span><h3>分批续写与最终统稿</h3><span class="pen">CONTINUATION + FINAL PASS</span>
+      <span class="purpose">目的：续写每次只做 10 集；完整剧本完成后再用统稿提示词收口。</span></div>
+    <div class="role-line">角色设定 —— “你现在继续担任本项目海外短剧主笔。/ 你现在是一名海外短剧剧本统稿负责人。”</div>
+    <div class="pblocks"><div class="pblock"><div class="bt">续写前强制复述</div><p>让 AI 先复述确认没有遗忘：人物卡、三幕七节点、逐集梗概、前文已发生事件、每个角色已知和未知的信息、已埋未回收的伏笔、伤势道具时间线固定称呼、上一批最后一个钩子。</p></div><div class="pblock"><div class="bt">续写范围锁死</div><p>只续写第【填写范围，如 11—20】集，不得超出范围；禁止擅自修改核心身份、关系、秘密和最终真相；保持三段式、短句、译制友好。</p></div><div class="pblock"><div class="bt">每批写完输出 9 项检查</div><p>人设一致性 / 剧情逻辑 / 时间线 / 伏笔埋设与回收 / 爽点密度 / 钩子分布 / 重复桥段 / AI 制作难度 / 下一批风险预警。</p></div><div class="pblock"><div class="bt">统稿七步</div><p>人物一致性 → 设定与时间线 → 剧情结构 → 伏笔与反转 → AI 译制 → 海外本土化 → 制作可行性，逐步修复，不新增无必要剧情，不改变已确认结局。</p></div><div class="pblock"><div class="bt">统稿最终输出 A—H</div><p>重大问题清单 / 对应集数 / 修改后终稿 / 伏笔回收表 / 人物与设定统一表 / 高成本场面替代清单 / 最终 100 分评分 / 是否可交付制作。</p></div></div>
+    <div class="endline">硬性收尾 —— 总分低于 80 分时，必须继续修改，不得直接判定可交付。</div>
+    <div class="prompt-bottom">
+      <div class="checklist"><h4>人工检查清单（逐项打勾）</h4><ul><li>续写是否超出指定范围</li><li>是否擅自改动已确认设定</li><li>伏笔是否连续回收</li><li>每批结尾是否有中型或大型钩子</li><li>统稿是否逐项输出 A—H</li><li>终稿是否附制作备注</li></ul></div>
+      <div class="passcmd"><h4>确认通过后，你对 AI 说：</h4><div class="cmd">终稿通过，可交付制作。</div>
+      <div class="hint">↑ 不说这句话，AI 不得进入下一阶段</div></div>
+    </div>
+  </div>
+ </div>
+</section>
+
+<section id="rhythm">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">04 / RHYTHM & HOOKS</div>
+    <h2 class="sec-title">60 集节奏钩子规划表</h2>
+    <p class="sec-sub">三幕七节点是骨架，钩子等级是心跳。红框区域是付费墙（第 8—12 集），必须落在大型钩子上 —— 付费前把情绪推到峰值，付费后第一集立刻释放爽点。</p>
+  </div>
+  <div class="acts"><div class="act reveal"><div class="ar">ACT I · EP 01—12</div><h4>第一幕：建置与破局</h4><p>第 3—4 集不可逆打击，第 10—12 集主角觉醒反击 —— 第一付费墙就卡在这里。</p></div><div class="act reveal"><div class="ar">ACT II · EP 13—42</div><h4>第二幕：对抗与升级</h4><p>第 20—22 集阶段胜利引来新危机，第 28—30 集中点反转，第 38—42 集至暗时刻。</p></div><div class="act reveal"><div class="ar">ACT III · EP 43—60</div><h4>第三幕：高潮与收尾</h4><p>第 48—50 集启动终极反击，第 55—58 集最终对决，第 59—60 集闭环并留续作钩子。</p></div></div>
+  <div class="heatmap reveal"><div class="cell L2" title="EP.01 · 第一幕：建置与破局 · 展示身份、困境、诉求 · 中型钩子">1</div><div class="cell L1" title="EP.02 · 第一幕：建置与破局 · 展示身份、困境、诉求 · 小型钩子">2</div><div class="cell L3" title="EP.03 · 第一幕：建置与破局 · 不可逆打击/激励事件 · 大型钩子">3</div><div class="cell L1" title="EP.04 · 第一幕：建置与破局 · 不可逆打击/激励事件 · 小型钩子">4</div><div class="cell L1" title="EP.05 · 第一幕：建置与破局 · 小型钩子">5</div><div class="cell L2" title="EP.06 · 第一幕：建置与破局 · 中型钩子">6</div><div class="cell L1" title="EP.07 · 第一幕：建置与破局 · 小型钩子">7</div><div class="cell L1 paywall" title="EP.08 · 第一幕：建置与破局 · 小型钩子">8</div><div class="cell L2 paywall" title="EP.09 · 第一幕：建置与破局 · 中型钩子">9</div><div class="cell L3 paywall" title="EP.10 · 第一幕：建置与破局 · 第一转折/付费墙 · 大型钩子">10</div><div class="cell L1 paywall" title="EP.11 · 第一幕：建置与破局 · 第一转折/付费墙 · 小型钩子">11</div><div class="cell L2 paywall" title="EP.12 · 第一幕：建置与破局 · 第一转折/付费墙 · 中型钩子">12</div><div class="cell L1" title="EP.13 · 第二幕：对抗与升级 · 小型钩子">13</div><div class="cell L1" title="EP.14 · 第二幕：对抗与升级 · 小型钩子">14</div><div class="cell L2" title="EP.15 · 第二幕：对抗与升级 · 中型钩子">15</div><div class="cell L1" title="EP.16 · 第二幕：对抗与升级 · 小型钩子">16</div><div class="cell L1" title="EP.17 · 第二幕：对抗与升级 · 小型钩子">17</div><div class="cell L2" title="EP.18 · 第二幕：对抗与升级 · 中型钩子">18</div><div class="cell L1" title="EP.19 · 第二幕：对抗与升级 · 小型钩子">19</div><div class="cell L3" title="EP.20 · 第二幕：对抗与升级 · 初次胜利＋新危机 · 大型钩子">20</div><div class="cell L2" title="EP.21 · 第二幕：对抗与升级 · 初次胜利＋新危机 · 中型钩子">21</div><div class="cell L1" title="EP.22 · 第二幕：对抗与升级 · 初次胜利＋新危机 · 小型钩子">22</div><div class="cell L1" title="EP.23 · 第二幕：对抗与升级 · 小型钩子">23</div><div class="cell L2" title="EP.24 · 第二幕：对抗与升级 · 中型钩子">24</div><div class="cell L1" title="EP.25 · 第二幕：对抗与升级 · 小型钩子">25</div><div class="cell L1" title="EP.26 · 第二幕：对抗与升级 · 小型钩子">26</div><div class="cell L2" title="EP.27 · 第二幕：对抗与升级 · 中型钩子">27</div><div class="cell L1" title="EP.28 · 第二幕：对抗与升级 · 中点反转 · 小型钩子">28</div><div class="cell L1" title="EP.29 · 第二幕：对抗与升级 · 中点反转 · 小型钩子">29</div><div class="cell L3" title="EP.30 · 第二幕：对抗与升级 · 中点反转 · 大型钩子">30</div><div class="cell L1" title="EP.31 · 第二幕：对抗与升级 · 小型钩子">31</div><div class="cell L1" title="EP.32 · 第二幕：对抗与升级 · 小型钩子">32</div><div class="cell L2" title="EP.33 · 第二幕：对抗与升级 · 中型钩子">33</div><div class="cell L1" title="EP.34 · 第二幕：对抗与升级 · 小型钩子">34</div><div class="cell L1" title="EP.35 · 第二幕：对抗与升级 · 小型钩子">35</div><div class="cell L2" title="EP.36 · 第二幕：对抗与升级 · 中型钩子">36</div><div class="cell L1" title="EP.37 · 第二幕：对抗与升级 · 小型钩子">37</div><div class="cell L1" title="EP.38 · 第二幕：对抗与升级 · 至暗时刻 · 小型钩子">38</div><div class="cell L2" title="EP.39 · 第二幕：对抗与升级 · 至暗时刻 · 中型钩子">39</div><div class="cell L3" title="EP.40 · 第二幕：对抗与升级 · 至暗时刻 · 大型钩子">40</div><div class="cell L1" title="EP.41 · 第二幕：对抗与升级 · 至暗时刻 · 小型钩子">41</div><div class="cell L2" title="EP.42 · 第二幕：对抗与升级 · 至暗时刻 · 中型钩子">42</div><div class="cell L1" title="EP.43 · 第三幕：高潮与收尾 · 小型钩子">43</div><div class="cell L1" title="EP.44 · 第三幕：高潮与收尾 · 小型钩子">44</div><div class="cell L2" title="EP.45 · 第三幕：高潮与收尾 · 中型钩子">45</div><div class="cell L1" title="EP.46 · 第三幕：高潮与收尾 · 小型钩子">46</div><div class="cell L1" title="EP.47 · 第三幕：高潮与收尾 · 小型钩子">47</div><div class="cell L2" title="EP.48 · 第三幕：高潮与收尾 · 终极反击启动 · 中型钩子">48</div><div class="cell L1" title="EP.49 · 第三幕：高潮与收尾 · 终极反击启动 · 小型钩子">49</div><div class="cell L3" title="EP.50 · 第三幕：高潮与收尾 · 终极反击启动 · 大型钩子">50</div><div class="cell L2" title="EP.51 · 第三幕：高潮与收尾 · 中型钩子">51</div><div class="cell L1" title="EP.52 · 第三幕：高潮与收尾 · 小型钩子">52</div><div class="cell L1" title="EP.53 · 第三幕：高潮与收尾 · 小型钩子">53</div><div class="cell L2" title="EP.54 · 第三幕：高潮与收尾 · 中型钩子">54</div><div class="cell L1" title="EP.55 · 第三幕：高潮与收尾 · 高潮对决 · 小型钩子">55</div><div class="cell L1" title="EP.56 · 第三幕：高潮与收尾 · 高潮对决 · 小型钩子">56</div><div class="cell L2" title="EP.57 · 第三幕：高潮与收尾 · 高潮对决 · 中型钩子">57</div><div class="cell L1" title="EP.58 · 第三幕：高潮与收尾 · 高潮对决 · 小型钩子">58</div><div class="cell L1" title="EP.59 · 第三幕：高潮与收尾 · 结局闭环＋续作钩子 · 小型钩子">59</div><div class="cell L3" title="EP.60 · 第三幕：高潮与收尾 · 结局闭环＋续作钩子 · 大型钩子">60</div></div>
+  <div class="hm-legend"><span><i style="background:rgba(178,199,58,.3)"></i>小型钩子 ×35</span>
+    <span><i style="background:rgba(210,255,0,.45)"></i>中型钩子 ×18</span>
+    <span><i style="background:#d2ff00"></i>大型钩子 ×7</span>
+    <span><i style="border:2px solid #ff5d47"></i>付费墙区间 EP 08—12</span></div>
+  <div class="hookrules reveal"><div><b>每集结尾一个小钩子</b> —— 60 集共 35 个小型钩子，保证单集留存</div><div><b>每 3 集一个中型钩子</b> —— 18 个中型钩子，维持追更节奏</div><div><b>每 10 集一个大型钩子</b> —— 第 3 / 10 / 20 / 30 / 40 / 50 / 60 集，共 7 个</div><div><b>付费墙（第 8—12 集）必须是大型钩子</b> —— 断点优先卡在身份即将曝光、反杀前夕、生死危机</div><div><b>相邻两集不得连用相同钩子类型</b> —— 防止观众产生节奏疲劳</div><div><b>普通悬念三集内必须兑现</b> —— 只吊胃口不兑现 = 弃剧</div></div>
+ </div>
+</section>
+
+<section id="localization">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">05 / TRANSLATION & LOCALIZATION QA</div>
+    <h2 class="sec-title">译制本土化：20 项检查，逐条过</h2>
+    <p class="sec-sub">海外 AI 短剧的台词必须能直译、能看懂、能拍出来。检查不合格的行，直接让 AI 按“推荐改法”重写 —— 不商量。</p>
+  </div>
+  <div class="tbl-scroll reveal"><table class="spec">
+    <thead><tr><th>检查项</th><th>合格标准</th><th>✕ 不合格写法</th><th>→ 推荐改法</th></tr></thead>
+    <tbody><tr><td class="k"><span class="tag">句式</span>句子长度</td><td>翻译成英文后尽量 ≤15 个单词</td><td class="bad">一句台词塞多个原因、转折和结果</td><td class="good">拆成 2—3 句，每句只表达一个信息</td></tr><tr><td class="k"><span class="tag">句式</span>主谓宾完整</td><td>明确谁做什么</td><td class="bad">省略主语导致代词不清</td><td class="good">补充人物或明确主语</td></tr><tr><td class="k"><span class="tag">句式</span>语序正常</td><td>使用正常陈述语序</td><td class="bad">倒装句、多重从句</td><td class="good">按发生顺序重写</td></tr><tr><td class="k"><span class="tag">词汇</span>基础通用词</td><td>英语 B1 难度以内词汇</td><td class="bad">生僻词、行业黑话</td><td class="good">换成常用词</td></tr><tr><td class="k"><span class="tag">词汇</span>概念统一</td><td>同一身份和物品全剧同一称呼</td><td class="bad">CEO / 老板 / 老大混用</td><td class="good">统一使用 CEO</td></tr><tr><td class="k"><span class="tag">词汇</span>无方言俚语</td><td>不依赖地区方言和网络语</td><td class="bad">“整活”“破防”“给个台阶”</td><td class="good">改为明确的行为和结果</td></tr><tr><td class="k"><span class="tag">修辞</span>少用比喻双关</td><td>信息直白、可翻译</td><td class="bad">“他气得七窍生烟”</td><td class="good">“他脸涨红，攥紧拳头”</td></tr><tr><td class="k"><span class="tag">动作</span>情绪外化</td><td>通过动作、表情、停顿表现</td><td class="bad">“她非常悲伤和绝望”</td><td class="good">“她删掉短信，手指一直发抖”</td></tr><tr><td class="k"><span class="tag">台词</span>每句有功能</td><td>推进剧情 / 传递信息 / 制造冲突 / 体现人物</td><td class="bad">闲聊和重复解释</td><td class="good">删除或改成行动</td></tr><tr><td class="k"><span class="tag">文化</span>保留普世情绪</td><td>爱、恨、尊严、复仇、亲情、嫉妒</td><td class="bad">依赖某地历史背景</td><td class="good">保留情绪，重构背景</td></tr><tr><td class="k"><span class="tag">文化</span>替换本土物品</td><td>功能不变，换成目标市场常见物品</td><td class="bad">玉佩、红包、白酒</td><td class="good">家族戒指、礼物、威士忌</td></tr><tr><td class="k"><span class="tag">文化</span>替换社会制度</td><td>使用全球易懂的机构和职位</td><td class="bad">衙门、科举、村支书</td><td class="good">法院 / 警局、职业考试、社区负责人</td></tr><tr><td class="k"><span class="tag">关系</span>简化亲属关系</td><td>让观众快速看懂人物关系</td><td class="bad">堂表舅姨、嫡庶宗族</td><td class="good">表亲、继子女、私生子、家族掌权者</td></tr><tr><td class="k"><span class="tag">删除</span>删除文化梗</td><td>无需注释就能理解</td><td class="bad">谐音梗、歇后语、历史典故</td><td class="good">删除或彻底重构</td></tr><tr><td class="k"><span class="tag">命名</span>目标市场常见姓名</td><td>角色名易读易记</td><td class="bad">拼音直译名</td><td class="good">使用目标市场高频姓名</td></tr><tr><td class="k"><span class="tag">合规</span>政治宗教风险</td><td>无现实政治和宗教冒犯</td><td class="bad">影射现实领导人、戏说宗教</td><td class="good">删除相关内容</td></tr><tr><td class="k"><span class="tag">合规</span>未成年人风险</td><td>无未成年人性暗示和严重暴力</td><td class="bad">危险或性化描写</td><td class="good">删除或将角色改为成年人</td></tr><tr><td class="k"><span class="tag">合规</span>歧视风险</td><td>无种族、性别、残障刻板印象</td><td class="bad">用群体身份当笑点或反派依据</td><td class="good">改成个人行为和利益冲突</td></tr><tr><td class="k"><span class="tag">制作</span>可视化动作</td><td>动作能被拍摄或 AI 生成</td><td class="bad">长篇内心独白</td><td class="good">改成动作、物品和结果</td></tr><tr><td class="k"><span class="tag">制作</span>场景可控</td><td>场景集中、人物数量可控</td><td class="bad">频繁新增地点和群众</td><td class="good">合并场景、减少临时角色</td></tr></tbody></table></div>
+ </div>
+</section>
+
+<section id="score">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">06 / FINAL SCORECARD</div>
+    <h2 class="sec-title">100 分审核评分表</h2>
+    <p class="sec-sub">前 10 集校准和全剧终稿共用同一张表。每项打分必须写出依据和对应集数；总分低于 80 分，建议继续修改，不建议交付。</p>
+  </div>
+  <div class="tbl-scroll reveal"><table class="spec">
+    <thead><tr><th>评分维度</th><th>权重</th><th>评分依据 / 对应集数</th></tr></thead>
+    <tbody><tr><td class="k">01 · 开篇吸引力</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">15 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:18px"></div></div></td>
+        <td>前 3 秒、前 30 秒、第 1 集结尾</td></tr><tr><td class="k">02 · 核心冲突清晰度</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>主角目标、阻力和失败代价</td></tr><tr><td class="k">03 · 人设辨识度与一致性</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>身份反差、行为逻辑、人物弧</td></tr><tr><td class="k">04 · 主角主动性</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>是否主动选择、行动和承担结果</td></tr><tr><td class="k">05 · 剧情推进效率</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>是否存在水集和重复桥段</td></tr><tr><td class="k">06 · 爽点与情绪密度</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>爽点频率、压抑与释放</td></tr><tr><td class="k">07 · 钩子强度与分布</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>每集 / 每 3 集 / 每 10 集钩子</td></tr><tr><td class="k">08 · 付费点吸引力</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">10 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:12px"></div></div></td>
+        <td>付费墙前峰值和付费后释放</td></tr><tr><td class="k">09 · AI 译制友好度</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">5 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:6px"></div></div></td>
+        <td>短句、统一词汇、无文化梗</td></tr><tr><td class="k">10 · AI 制作可行性</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">5 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:6px"></div></div></td>
+        <td>场景、人物、动作、特效成本</td></tr><tr><td class="k">11 · 海外文化适配与合规</td>
+        <td class="v" style="font-family:'IBM Plex Mono',monospace">5 分<div style="height:4px;background:rgba(244,244,237,.1);margin-top:6px;width:120px"><div style="height:4px;background:var(--lime);width:6px"></div></div></td>
+        <td>政治、宗教、种族、未成年人等</td></tr>
+    <tr><td class="k" style="color:var(--lime)">总分</td><td class="v" style="font-family:'IBM Plex Mono',monospace;color:var(--lime)">100 分</td><td style="color:var(--lime)">≥80 交付 / ＜80 继续修改</td></tr>
+    </tbody></table></div>
+ </div>
+</section>
+
+<section id="gates">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">07 / QUALITY GATES</div>
+    <h2 class="sec-title">三道闸门：分数不够，流程不走</h2>
+    <p class="sec-sub">SOP 的价值不在“能生成”，而在“敢叫停”。三个关键节点各有一道分数闸门，另有一票否决项全程生效。</p>
+  </div>
+  <div class="gates"><div class="gate reveal"><div class="gn">GATE 01</div><div class="gs">≥60</div>
+      <h3>立项闸门</h3><p>四维评分总分 ≥60 且无一票否决项，才允许进入人物与大纲阶段。</p><div class="gf">未过闸 → 低于 60 或命中否决项 → 暂不建议立项</div></div><div class="gate reveal"><div class="gn">GATE 02</div><div class="gs">≥80</div>
+      <h3>前 10 集校准闸门</h3><p>前 10 集成稿 100 分自检 ≥80，才允许续写第 11 集以后。</p><div class="gf">未过闸 → 低于 80 → 先给问题并自动修改，不得继续</div></div><div class="gate reveal"><div class="gn">GATE 03</div><div class="gs">≥80</div>
+      <h3>终稿交付闸门</h3><p>统稿后最终评分 ≥80，才判定可以交付制作。</p><div class="gf">未过闸 → 低于 80 → 必须继续修改，不得直接交付</div></div></div>
+  <div class="veto reveal"><h4>一票否决项 —— 命中任一，暂不建议立项</h4><ul><li>依赖强烈本土文化背景</li><li>依赖谐音梗、成语、复杂人情或宗族关系</li><li>涉及现实政治人物或敏感事件</li><li>丑化宗教</li><li>美化违法犯罪、吸毒或赌博</li><li>未成年人性暗示或严重不良导向</li><li>明显种族、性别或残障歧视</li><li>与已有作品高度雷同</li><li>拍摄或 AI 制作成本明显超出项目等级</li></ul></div>
+ </div>
+</section>
+
+<section id="deliverables">
+ <div class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-num">08 / OUTPUTS</div>
+    <h2 class="sec-title">跑完一遍 SOP，手上会多出这 12 样东西</h2>
+    <p class="sec-sub">每一步都沉淀为可复用、可检查的资产 —— 这就是“工业化”和“随缘写”的区别。</p>
+  </div>
+  <div class="dl"><div class="reveal"><span class="st">阶段 01</span><h4>项目输入卡</h4><p>16 项参数全部填写完毕，含禁区与参考方向</p></div><div class="reveal"><span class="st">阶段 02</span><h4>一页纸立项方案</h4><p>四维评分 ＋ 立项结论 ＋ 3 个视觉爆点</p></div><div class="reveal"><span class="st">阶段 03</span><h4>人物卡</h4><p>每个主要人物 17 项，含“绝对不会做的事”</p></div><div class="reveal"><span class="st">阶段 03</span><h4>三幕七节点大纲</h4><p>每个节点写成“人物＋动作＋直接结果”</p></div><div class="reveal"><span class="st">阶段 04</span><h4>全剧分集梗概</h4><p>每集约 100 字，11 项固定字段</p></div><div class="reveal"><span class="st">阶段 04</span><h4>六张分布表</h4><p>爽点 / 反转 / 钩子 / 付费点 / 伏笔 / 场景人物频率</p></div><div class="reveal"><span class="st">阶段 05</span><h4>前 10 集完整成稿</h4><p>含每场信息推进、结尾钩子、AI 制作备注</p></div><div class="reveal"><span class="st">阶段 06</span><h4>节奏钩子规划表</h4><p>60 集逐集填入钩子类型、内容与兑现集数</p></div><div class="reveal"><span class="st">阶段 07</span><h4>译制本土化检查表</h4><p>20 项逐条过，不合格台词已重写</p></div><div class="reveal"><span class="st">阶段 08</span><h4>分批续写成稿</h4><p>每批 10 集 ＋ 9 项一致性检查</p></div><div class="reveal"><span class="st">阶段 09</span><h4>统稿终稿</h4><p>重大问题清单 ＋ 伏笔回收表 ＋ 设定统一表 ＋ 高成本替代清单</p></div><div class="reveal"><span class="st">阶段 10</span><h4>最终审核评分表</h4><p>11 维 100 分，附主要问题与修改清单</p></div></div>
+ </div>
+</section>
+
+<section class="outro" id="contact" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-num" style="text-align:center">PORTFOLIO · PROCESS DESIGN</div>
+    <h2>把“写短剧”变成<br>一条可以质检的流水线</h2>
+    <p>这套 SOP 由我把传统编剧手册逐条拆解、重组为 AI 可执行的工作流：10 步操作、5 套提示词模具、60 集节奏表、20 项译制检查、100 分审核与 3 道闸门。适合海外付费短剧的批量开发与质量管控。</p>
+    <div class="hero-cta" style="justify-content:center">
+      <a class="btn btn-solid" href="assets/ai-serial-writing-sop.pdf" target="_blank">下载完整 PDF ↓</a>
+      <a class="btn btn-ghost" href="#sop">回到十步流程 ↑</a>
+    </div>
+  </div>
+</section>
+<footer><div class="wrap">
+  <span>AI SHORT-DRAMA SCREENWRITING SOP — PERSONAL PORTFOLIO</span>
+  <span>10 STEPS · 5 PROMPTS · 3 GATES · 100-POINT QA</span>
+</div></footer>
+<script>
+const sections=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+sections.forEach(s=>io.observe(s));
+
+const path=document.getElementById('flowPath');
+const dot=document.querySelector('.flow-dot');
+const stepCards=[...document.querySelectorAll('.step')];
+if(path){
+  const L=path.getTotalLength();
+  path.style.strokeDasharray=L; path.style.strokeDashoffset=L;
+  const sopSection=document.getElementById('sop');
+  function update(){
+    const max=document.documentElement.scrollHeight-innerHeight;
+    document.querySelector('.progress').style.width=(scrollY/Math.max(max,1)*100)+'%';
+    const r=sopSection.getBoundingClientRect();
+    const total=r.height-innerHeight*0.6;
+    const p=Math.max(0,Math.min(1,(-r.top+innerHeight*0.35)/Math.max(total,1)));
+    path.style.strokeDashoffset=L*(1-p);
+    const pt=path.getPointAtLength(L*p);
+    dot.style.left=(pt.x/400*100)+'%';
+    dot.style.top=(pt.y/(10*118+40)*100)+'%';
+    const idx=Math.min(stepCards.length-1,Math.floor(p*stepCards.length));
+    stepCards.forEach((c,i)=>c.classList.toggle('active',i===idx));
+  }
+  addEventListener('scroll',update,{passive:true}); addEventListener('resize',update); update();
+}else{
+  addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;
+    document.querySelector('.progress').style.width=(scrollY/Math.max(max,1)*100)+'%'},{passive:true});
+}
+</script></body></html>
